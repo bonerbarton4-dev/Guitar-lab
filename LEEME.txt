@@ -1,0 +1,14 @@
+GUITAR LAB — APP WEB INSTALABLE
+
+CONTENIDO
+- index.html: aplicación interactiva
+- manifest.json, icon.svg y sw.js: instalación y caché offline
+
+PARA INSTALAR EN ANDROID
+1. Publica estos archivos en un hosting HTTPS, por ejemplo GitHub Pages.
+2. Abre la dirección HTTPS publicada en Chrome en tu Samsung A26.
+3. Pulsa ⋮ > Instalar aplicación (o Añadir a pantalla de inicio, según la opción disponible).
+4. Confirma la instalación.
+
+IMPORTANTE
+No basta con abrir index.html desde la carpeta del teléfono: para que Android la instale como PWA necesita estar publicada mediante HTTPS. El progreso se guarda en el almacenamiento local del navegador/dispositivo. Exporta el JSON periódicamente para tener una copia de seguridad.

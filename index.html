@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#151c2b">
+<meta name="description" content="Mapa interactivo de estudio de guitarra de 12 semanas.">
+<link rel="manifest" href="manifest.json">
+<title>Guitar Lab · Estudio de guitarra</title>
+<style>
+:root{color-scheme:light dark;--bg:#f4f6fa;--panel:#fff;--text:#172033;--muted:#657087;--line:#dce2ec;--accent:#e7b65a;--navy:#151c2b;--teal:#278a81}
+@media(prefers-color-scheme:dark){:root{--bg:#101521;--panel:#1a2231;--text:#edf1f7;--muted:#aab5c8;--line:#344055}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:var(--navy);color:white;padding:22px 16px 18px}header .inner,main{max-width:850px;margin:auto}h1{font-size:1.65rem;margin:0 0 5px}header p{margin:0;color:#c2cad9}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:18px}.stat{background:#263044;padding:12px;border-radius:12px}.stat strong{display:block;font-size:1.3rem}.stat span{font-size:.78rem;color:#c2cad9}
+main{padding:16px;display:grid;gap:16px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}h2{font-size:1.15rem;margin:0 0 12px}h3{font-size:1rem;margin:0 0 7px}.muted{color:var(--muted);font-size:.9rem}.weeks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.week{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 3px;border-radius:10px;cursor:pointer}.week.active{background:var(--accent);color:#151c2b;border-color:var(--accent);font-weight:700}.week small{display:block;font-size:.68rem;margin-top:3px}.task{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:9px}.task label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}.task input{width:20px;height:20px;accent-color:var(--teal);flex-shrink:0;margin-top:2px}.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}.chip{background:var(--bg);border:1px solid var(--line);padding:4px 7px;border-radius:999px;font-size:.72rem;color:var(--muted)}.progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0}.progress span{display:block;height:100%;background:var(--teal);width:0}button,select,textarea,input[type=number]{font:inherit}button.primary{background:var(--navy);color:#fff;border:0;border-radius:10px;padding:11px 14px;cursor:pointer}button.secondary{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}textarea{width:100%;min-height:85px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text)}input[type=range]{width:100%;accent-color:var(--teal)}.tempo{font-size:1.5rem;font-weight:750}.module{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.dot{width:12px;height:12px;border-radius:4px;flex-shrink:0;margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap}footer{text-align:center;color:var(--muted);font-size:.8rem;padding:4px 16px 24px}
+</style>
+</head>
+<body>
+<header><div class="inner">
+<h1>🎸 Guitar Lab</h1><p>Mapa interactivo · 12 semanas · 5 días por semana</p>
+<div class="stats"><div class="stat"><strong>60 min</strong><span>por sesión</span></div><div class="stat"><strong id="completed">0/60</strong><span>sesiones completadas</span></div><div class="stat"><strong id="percent">0%</strong><span>progreso total</span></div></div>
+<div class="progress"><span id="overallbar"></span></div>
+</div></header>
+<main>
+<section class="panel"><h2>1. Mapa de semanas</h2><p class="muted">Selecciona una semana para ver el plan y marcar tus sesiones. El progreso se guarda en este dispositivo.</p><div class="weeks" id="weeks"></div></section>
+<section class="panel">
+<div class="muted" id="phase"></div><h2 id="focus"></h2><p id="goal"></p><div class="progress"><span id="weekbar"></span></div><p class="muted" id="weekcount"></p>
+<h3>Sesiones de la semana</h3><div id="tasks"></div>
+<h3 style="margin-top:18px">Notas de práctica</h3><textarea id="notes" placeholder="Ej.: revisar cambios de cuerda a 60 BPM..."></textarea>
+<p class="muted">Guarda ideas, dificultades y logros de la semana seleccionada.</p>
+</section>
+<section class="panel"><h2>2. Los cinco módulos</h2><div id="modules"></div></section>
+<section class="panel"><h2>3. Seguimiento de tempo</h2><p class="muted">Usa el tempo más alto que puedas tocar limpiamente, sin tensión.</p><div class="tempo"><span id="bpmout">60</span> BPM</div><input id="bpm" type="range" min="40" max="160" step="5" value="60"><div class="muted">Tempo de referencia sugerido: <b id="suggested">60</b> BPM.</div><div class="actions" style="margin-top:12px"><button class="secondary" id="resettempo">Usar tempo sugerido</button><button class="secondary" id="export">Exportar mi progreso</button><button class="secondary" id="reset">Reiniciar progreso</button></div></section>
+<section class="panel"><h2>4. Criterios para avanzar</h2><ol><li>Toca el ejercicio tres veces seguidas con limpieza y sin ruidos innecesarios.</li><li>Registra el BPM máximo en que mantienes precisión y relajación.</li><li>Explica qué acorde suena y por qué una nota funciona sobre él.</li><li>Graba una frase propia y varía su ritmo o resolución.</li><li>Al final de la semana, identifica un logro y un punto débil.</li></ol><p class="muted">No aumentes la velocidad a costa de la técnica. Si aparece tensión, baja 5–10 BPM.</p></section>
+</main><footer>Guitar Lab · Tus marcas y notas se guardan localmente en este navegador.</footer>
+<script>
+const weeks=[
+["Blues","Fraseo y pentatónica menor","Construir frases con intención en La menor.",60,["Pentatónica menor de Am: cinco notas con buen sonido","Bends afinados, vibrato y notas largas","Llamada y respuesta en frases de dos compases","Acompañamiento blues de 12 compases","Improvisación grabada: usar silencios y motivos"]],
+["Blues","Lenguaje de blues","Conectar pentatónica, notas de blues y acordes.",65,["Pentatónica menor y blue note","Bends hacia notas objetivo del acorde","Frases sobre A7, D7 y E7","Ritmo shuffle y riffs de acompañamiento","Solo de 12 compases con principio y final"]],
+["Armonía","Intervalos y acordes","Saber qué notas resaltan sobre cada acorde.",60,["Intervalos desde la tónica","Triadas mayores y menores en tres cuerdas","Arpegios de Am7, Dm7 y E7","Tocar terceras y séptimas sobre progresiones","Crear una frase que resuelva en notas del acorde"]],
+["Armonía","Armonía funcional","Escuchar la tensión y la resolución.",60,["Progresión Am–Dm–E7–Am","Grados de la tonalidad menor armónica","Acordes diatónicos y función tonal","Conducir voces entre acordes cercanos","Improvisar usando una nota objetivo por acorde"]],
+["Frank Gambale","Economy picking","Dominar cambios de cuerda eficientes sin tensión.",50,["Alternate picking lento y sincronizado","Economy picking en grupos de tres notas","Cruces de cuerda: elegir el movimiento correcto","Secuencias de tres notas por cuerda","Grabar y comparar limpieza a velocidad moderada"]],
+["Frank Gambale","Escalas y arpegios","Conectar digitaciones con armonía.",55,["Escala mayor en una posición y sus intervalos","Modos: Dórico sobre un acorde menor","Triadas e inversiones por el diapasón","Secuencias con economy picking","Improvisación corta usando escala y arpegios"]],
+["Yngwie Malmsteen","Menor armónica","Escuchar el color neoclásico antes de acelerar.",55,["La menor armónica: sonido y digitación","Frases con séptima mayor de la escala","Pedal tones con acentos controlados","Secuencias de tres notas y resolución","Crear un lick neoclásico de dos compases"]],
+["Yngwie Malmsteen","Alternate picking y velocidad","Subir tempo sin perder sincronización.",60,["Alternate picking con metrónomo","Patrón 10–13–12–13 en primera cuerda, lento y limpio","Secuencias ascendentes y descendentes","Ráfagas cortas con descanso y relajación","Grabar el tempo más alto que siga limpio"]],
+["Yngwie Malmsteen","Arpegios y sweep","Separar el movimiento de barrido y la articulación.",50,["Triadas menores en tres cuerdas","Barrido lento con notas separadas","Cambios de posición y apagado de cuerdas","Combinar arpegio y frase de menor armónica","Aplicar un arpegio en una progresión real"]],
+["Guthrie Govan","Vocabulario y dinámica","Transformar ejercicios en frases musicales.",60,["Transcribir una frase corta de oído","Variar ritmo, final y articulación de una frase","Mezclar pentatónica y notas del acorde","Improvisar con motivos y silencios","Grabar dos versiones de la misma idea"]],
+["Guthrie Govan","Armonía aplicada y fusión","Conectar sonidos blues, modal y neoclásico.",60,["Improvisar sobre Am7 usando notas del acorde","Contrastar Dórico y menor natural","Añadir cromatismos con resolución consciente","Cambiar de frase según cada acorde","Crear un solo con tres colores musicales"]],
+["Integración","Tu propio lenguaje","Combinar técnica, armonía y expresión en una pieza.",60,["Calentamiento y repaso de puntos débiles","Blues: fraseo y dinámica","Neoclásico: menor armónica y arpegios","Fusión: acordes, motivos y cambios de color","Grabar una pieza y evaluar técnica, tiempo y musicalidad"]]
+];
+const days=["Lunes","Martes","Miércoles","Jueves","Viernes"];
+const modules=[["Blues · Joe Bonamassa","#b96a35","Pentatónica, bends, vibrato, dinámica y fraseo vocal."],["Armonía aplicada","#278a81","Intervalos, triadas, séptimas, funciones y notas objetivo."],["Técnica · Frank Gambale","#5279d0","Economy picking, alternate picking y conexión de escalas."],["Shred · Yngwie Malmsteen","#b35a72","Menor armónica, pedal tones, secuencias y arpegios sweep."],["Improvisación · Guthrie Govan","#8a6bc0","Vocabulario, cromatismos, motivos, fusión y creatividad."]];
+let current=1;
+let state={done:[],notes:{},bpm:{}};
+try{state=Object.assign(state,JSON.parse(localStorage.getItem("guitarLabProgress")||"{}"))}catch(e){}
+function save(){try{localStorage.setItem("guitarLabProgress",JSON.stringify(state))}catch(e){}}
+function key(w,d){return "w"+w+"d"+d}
+function drawWeeks(){const el=document.getElementById("weeks");el.innerHTML="";weeks.forEach((w,i)=>{let b=document.createElement("button");b.className="week"+(current===i+1?" active":"");b.innerHTML=(i+1).toString().padStart(2,"0")+"<small>"+w[0]+"</small>";b.onclick=()=>{current=i+1;render()};el.appendChild(b)})}
+function render(){drawWeeks();let w=weeks[current-1];document.getElementById("phase").textContent="SEMANA "+String(current).padStart(2,"0")+" · "+w[0].toUpperCase();document.getElementById("focus").textContent=w[1];document.getElementById("goal").textContent=w[2];document.getElementById("suggested").textContent=w[3];document.getElementById("bpm").value=state.bpm[current]||w[3];document.getElementById("bpmout").textContent=document.getElementById("bpm").value;document.getElementById("notes").value=state.notes[current]||"";let count=w[4].filter((_,i)=>state.done.includes(key(current,i))).length;document.getElementById("weekbar").style.width=(count/5*100)+"%";document.getElementById("weekcount").textContent=count+"/5 sesiones completadas";
+let tasks=document.getElementById("tasks");tasks.innerHTML="";w[4].forEach((task,i)=>{let div=document.createElement("div");div.className="task";let label=document.createElement("label");let input=document.createElement("input");input.type="checkbox";input.checked=state.done.includes(key(current,i));input.onchange=()=>{if(input.checked){if(!state.done.includes(key(current,i)))state.done.push(key(current,i))}else state.done=state.done.filter(x=>x!==key(current,i));save();render()};let span=document.createElement("span");span.innerHTML="<b>"+days[i]+" · 60 min</b><br>"+task;label.append(input,span);div.appendChild(label);let chips=document.createElement("div");chips.className="chips";["10 min · Calentamiento","20 min · Técnica","15 min · Aplicación","10 min · Improvisación","5 min · Registro"].forEach(c=>{let s=document.createElement("span");s.className="chip";s.textContent=c;chips.appendChild(s)});div.appendChild(chips);tasks.appendChild(div)});
+document.getElementById("completed").textContent=state.done.length+"/60";let pct=Math.round(state.done.length/60*100);document.getElementById("percent").textContent=pct+"%";document.getElementById("overallbar").style.width=pct+"%";
+document.getElementById("modules").innerHTML=modules.map((m,i)=>'<div class="module"><span class="dot" style="background:'+m[1]+'"></span><div><b>'+m[0]+'</b><div class="muted">'+m[2]+'</div></div></div>').join("");}
+document.getElementById("notes").addEventListener("input",e=>{state.notes[current]=e.target.value;save()});
+document.getElementById("bpm").addEventListener("input",e=>{state.bpm[current]=Number(e.target.value);document.getElementById("bpmout").textContent=e.target.value;save()});
+document.getElementById("resettempo").onclick=()=>{state.bpm[current]=weeks[current-1][3];save();render()};
+document.getElementById("export").onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="guitar-lab-progreso.json";a.click();URL.revokeObjectURL(a.href)};
+document.getElementById("reset").onclick=()=>{if(confirm("¿Seguro que quieres borrar todo el seguimiento de este dispositivo?")){state={done:[],notes:{},bpm:{}};save();render()}};
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
+render();
+</script>
+</body></html>
